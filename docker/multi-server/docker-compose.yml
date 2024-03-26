@@ -1,0 +1,43 @@
+version: '3'
+services:
+  minecraft-vanilla:
+    image: itzg/minecraft-server
+    environment:
+      - EULA=TRUE
+      - VERSION=1.20.4
+      - INIT_MEMORY=1G
+      - MAX_MEMORY=3G
+      - TYPE=PURPUR
+    volumes:
+      - /var/mc-data/:/data
+    restart: on-failure
+    networks:
+      - minecraft
+
+  minecraft-creative:
+    image: itzg/minecraft-server
+    environment:
+      - EULA=TRUE
+      - VERSION=1.20.4
+      - INIT_MEMORY=1G
+      - MAX_MEMORY=2G
+      - TYPE=PURPUR
+    volumes:
+      - /var/minecraft-creative/:/data
+    restart: on-failure
+    networks:
+      - minecraft
+
+  router:
+    image: itzg/mc-router
+    ports:
+      - 25565:25565
+    command: --mapping=minecraft.maurosterckx.be=minecraft-vanilla:25565,creative.maurosterckx.be=minecraft-creative:25565
+    restart: on-failure
+    networks:
+      - minecraft
+
+networks:
+  minecraft:
+    external: true
+    name: minecraft
